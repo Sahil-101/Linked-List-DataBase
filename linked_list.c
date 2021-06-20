@@ -37,7 +37,7 @@ struct node
 //Private function to make nodes
 static Node makenode(char *userName,char *phoneNum,char* email)
 {
-	Node newnode = malloc(sizeof(newnode));
+	Node newnode = malloc(sizeof(*newnode));
 	assert(newnode != NULL);
 	
     newnode->value = val;
@@ -45,7 +45,7 @@ static Node makenode(char *userName,char *phoneNum,char* email)
 	newnode->name = userName;
     newnode->email= email;
     newnode->next = NULL;
-    printf("agla null hai bahi\n");
+    
     val++;
     
 	return newnode;
@@ -54,7 +54,7 @@ static Node makenode(char *userName,char *phoneNum,char* email)
 //Creates a node for linked list
 List Lmakelist()
 {
-	List Llist = malloc(sizeof(Llist));
+	List Llist = malloc(sizeof(struct Slist));
 	assert(Llist != NULL);
 	Llist->head = NULL;
 	Llist->size = 0;
@@ -111,107 +111,90 @@ int Lisempty(List list)
 void Lprintlist(List list)
 {
 	assert(list != NULL);
-	if (list->head == NULL)
+	if (list->size==0)
 	{
-		printf("List is empty\n");
+		printf("List is empty\n\n\n");
 	}
 	else
 	{
 		Node curr = list->head;
-		while (curr != NULL)
+		while(curr!=NULL)
 		{
 
-			printf("%d/n", curr->value);
-            printf("%s is name/n", curr->name);
-            printf("%s is email/n", curr->email);
-            printf("%s is phone numer", curr->phone);
+			printf("%d is value\n", curr->value);
+            printf("%s is name\n", curr->name);
+            // printf("%s is email\n", curr->email);
+            // printf("%s is phone numer\n", curr->phone);
  
 			curr = curr->next;
-		}
-		printf("\n");
+		}		
+		printf("\n\n\n");
 	}
 }
 
 //Remove the given element from Linked list
-void Ldelete(List list, int val)
+void Ldelete(List list, int vals)
 {
-	assert(list != NULL);
-	if (list->size == 0)
+	if(list->head==NULL)
+		printf("list is not made\n");
+	if(list->size==0)
+		printf("list empty\n");
+	Node temp,temp2;
+	if(list->head->value==vals)
 	{
-		printf("cannot delete from empty list\n");
-		assert(list->size != 0);
-	}
-	else if (list->size == 1)
-	{
-		if (list->head->value == val)
+		temp=list->head;
+		list->head=temp->next;
+		free(temp);
+		temp=list->head;
+		val--;
+		list->size--;
+		for(int i=0; i< (list->size) ; i++)
 		{
-			free(list->head);
-			list->head = NULL;
+			temp->value--;
+			temp=temp->next;
+		}	
+		return;
+	}
+
+	
+	temp=list->head;
+	temp2=list->head;
+
+	while(temp->next!=NULL && temp->value!=vals)
+	{
+		temp2=temp;
+		temp=temp->next;
+	}
+	if(temp->next==NULL)
+	{
+		if (temp->value == vals)
+		{
+			free(temp);
+			temp2->next=NULL;
 			list->size--;
+			val--;
 			return;
 		}
 		else
 		{
-			printf("no such element found\n");
-			assert(list->head->value == val);
+			printf("Not found given element");
 		}
 	}
-	else if (list->head->value == val)
-	{   
-		Node temp = list->head;
-		list->head = list->head->next;
-		free(temp);
-        Node temp2 = list->head;
-        while(temp2->next!=NULL)
-        {
-                  temp2->value--;
-                  temp2 = temp->next;
-        }
-		list->size--;
-        free(temp2);
-		return;
-	}
-	else
+	else 
 	{
-		Node bfcurr = NULL;
-		Node curr = list->head;
-
-		while (curr->value != val)
+		temp2->next=temp->next;
+		temp2=temp;
+		while(temp2!=NULL)
 		{
-			bfcurr = curr;
-			curr = curr->next;
-			if (curr == NULL)
-			{
-				printf("no such element found\n");
-				return;
-			}
+			temp2->value--;
+			temp2=temp2->next;
 		}
-
-		if (curr->next == NULL)
-		{
-			Node temp = bfcurr->next;
-			bfcurr->next = NULL;
-			
-            free(temp);
-			list->size--;
-			return;
-		}
-		Node temp = bfcurr->next;
-		bfcurr->next = curr->next;
-		Node temp2 = curr->next;
-        list->size--;
-        while(temp2->next!=NULL)
-        {
-            temp2->value--;
-            temp2=temp2->next;
-
-        }
-        temp2->value--;
-        free(temp2);
-        free(temp);
-
+		free(temp);
+		list->size--;
+		val--;
 		return;
 	}
+	
 }
 
 //Frees the dynamically allocated memory
