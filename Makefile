@@ -1,4 +1,6 @@
 #This is makefile
+#indeed
+
 .PHONY: clean 
 testqueue: testlist.o linked_list.o
 	gcc -g -Wall  -fno-omit-frame-pointer  linked_list.o testlist.o -o testlist
